@@ -1,0 +1,29 @@
+show dbs
+use rc
+db.createCollection("Student")
+show dbs
+db.Student.insert({rollno:01,name:"John",marks:60)}
+db.Student.insert({rollno:02,name:"Doe",marks:70)}
+db.Student.insert({rollno:03,name:"Allen",marks:50)}
+db.Student.insert({rollno:04,name:"Solly",marks:90)}
+db.Student.find()
+db.Student.find().pretty()
+db.createCollection("Schools")
+show collections
+use emp
+show dbs
+use rc
+db.Student.find({marks:{$gt:65}}).pretty()
+db.Student.find({marks:{$lt:65}}).pretty()
+db.Student.remove({name:"Doe"})
+db.Student.find().pretty()
+db.Student.find({},{name:1}).pretty()
+db.Student.find({},{name:1,_id:0}).pretty()
+db.Student.find({},{name:1,_id:0}).sort({name:1}).pretty()
+db.Student.find({},{name:1,_id:0}).sort({name:-1}).pretty()
+db.Student.createIndex({name:1})
+db.Student.dropIndex({name:1})
+db.Student.drop()
+show collections
+
+
