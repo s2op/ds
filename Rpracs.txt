@@ -1,0 +1,208 @@
+#1-nosql
+stud<-read.csv(file.choose(), sep= ",", header=T)
+names(stud)
+dim(stud)
+str(stud)
+query1<-filter(stud,marks>500|class=="Tycs")
+query1
+stud1<-group_by(stud,class)
+stud1
+query2<-summarise(stud1,mean(marks))
+query2
+summarise(stud,max(marks))
+summarise(stud,min(marks))
+summarise(stud,n())
+summarise(stud,sum(marks))
+query3<-arrange(stud,(marks))
+query3
+arrange(stud,name)
+select(stud,name)
+
+filter(stud,class=="fycs")%>%arrange(marks)
+filter(stud,class=="sycs")%>%arrange(marks)
+filter(stud,class=="tycs")%>%arrange(marks)
+mutate(stud,Perc=marks/10)
+stud1
+
+stud1<-group_by(stud,class)
+stud1
+query2<-summarise(stud1,max(marks))
+query2
+
+#4-Practical of Clustering
+head(iris)
+library(ggplot2)
+ggplot(iris,aes(Petal.Length,Petal.Width,color=Species))+geom_point()
+set.seed(20)
+irisCluster<-kmeans(iris[ ,3:4],3,nstart = 20)
+irisCluster
+table(irisCluster$cluster,iris$Species)
+ggplot(iris,aes(Petal.Length,Petal.Width,color=irisCluster$cluster))+geom_point()
+View(iris)
+
+
+head(iris)
+clusters<-hclust(dist(iris[ ,3:4]))
+plot(clusters)
+clusterCut<-cutree(clusters,3)
+table(clusterCut,iris$Species)
+cluster<-hclust(dist(iris[ ,3:4]),method = 'single')
+plot(clusters)
+clusterCut<-cutree(clusters,3)
+table(clusterCut,iris$Species)
+ggplot(iris,aes(Petal.Length,Petal.Width,color=Species))+geom_point(alpha=0.4,size=3.5)+geom_point(col=clusterCut)+scale_color_manual(values=c('black','red','green'))
+
+#6 & 7 Regression
+library(ggplot2)
+mydata<-mtcars
+names<-(mydata)
+dim(mydata)
+#Randomize
+mydata<-mydata[sample(nrow(mydata),),]
+head(mydata)
+TrainData<-mydata[1:20,]
+TestData<-mydata[21:32,]
+
+#linear model
+fit = lm(mpg~hp,data=mtcars)
+summary(fit)
+preds<-predict(fit,newdata=TestData)
+df1<-data.frame(preds,TestData$mpg)
+head(df1)
+
+#correlation
+cor(preds,TestData$mpg)
+ggplot(fit,aes(hp,mpg))+geom_point()+stat_smooth(method = lm, se= FALSE)+geom_segment(aes(xend = hp, yend = .fitted),color='red',size=0.3)
+
+#logistic Regression
+lmmodel <- lm (mpg~ hp + cyl + gear + wt, data=TrainData)
+summary(lmmodel)
+preds_new<-predict(lmmodel, newdata = TestData)
+df2<-data.frame(preds_new,TestData$mpg)
+head(df2)
+
+plot(mtcars$hp+mtcars$cyl+mtcars$gear+mtcars$wt,mtcars$mpg)
+ggplot(fit,aes(mtcars$hp+mtcars$cyl+mtcars$gear+mtcars$wt,mtcars$mpg))+geom_point()+stat_smooth(method = lm, se= FALSE)+geom_segment(aes(xend = hp, yend = .fitted),color='red',size=0.3)
+
+#5-Time series with our data
+#predictor vector
+x<-c(5.1,5.5,5.8,6.1,6.4,6.7,6.4,6.1,5.10,5.7)
+#response vector
+y<-c(63,66,69,72,75,78,75,72,69,66)
+#response vector 
+y<-c(63,66,69,72,75,78,75,72,69,66)
+#apply lm()function
+relation<-lm(y~x)
+summary(relation)
+#find weight of a person with height
+a<-data.frame(x=6.3)
+result<-predict(relation,a)
+print(result)
+
+
+#Timeseries with our data
+#creating time series
+sales<-c(435735,465404,474742,477841,501775,503578,521750,562246,572453,592955,607816,614864,656448,658781,690422,708860)
+#yearly time series
+sales_ts<-ts(sales,start=2000,end=2015,frequency=1)
+#quaterly time series
+sales_ts<-ts(sales,start=2000,end=2015,frequency = 4)
+#monthly time series
+sales_ts<-ts(sales,start=2000,end=2015,frequency = 12)
+#ploting time series
+plot.ts(sales_ts)
+
+
+#Timeseries with inbuilt data
+data("AirPassengers")
+class(AirPassengers)
+start(AirPassengers)
+end(AirPassengers)
+frequency(AirPassengers)
+summary(AirPassengers)
+plot(AirPassengers)
+#plot the best fit line which can be used for regression
+abline(reg=lm(AirPassengers~time(AirPassengers)))
+#to print cycle across year
+cycle(AirPassengers)
+#to aggregate the cycle and display the trend as per year
+plot(aggregate(AirPassengers,FUN = mean))
+#to get Boxplot
+boxplot(AirPassengers~cycle(AirPassengers))
+
+#8-Hypothesis testing
+#program 1
+sample_data<-c(2,3,4,5,6,7,8,9)
+#one-sample t_test
+a<-t.test(sample_data,mu=5)
+print(a)
+
+#program 2
+#sample_data
+group_1<-c(2,3,4,5,6)
+group_2<-c(7,8,9,10,11)
+
+#two sample t_test
+b<-t.test(group_1,group_2)
+print(b)
+
+#program 3
+# Generate three sets of data
+x <- rnorm(50, mean = 10, sd = 2) 
+y <- rnorm(50, mean = 12, sd = 2) 
+z <- rnorm(50, mean = 14, sd = 2) 
+# Combine the data into a single dataframe 
+df <- data.frame(value = c(x, y, z), group = rep(c("X", "Y", "Z"), each = 50)) 
+# Perform a one-way ANOVA
+model <- lm(value ~ group, data = df) 
+anova(model)
+
+#Next prac 9 analysis of variance
+#load mtcars dataset
+data(mtcars)
+#perform anova on mpg by grouping the data by the number of cylinders
+anova_result<-aov(mpg~cyl,data=mtcars)
+#print anova summary
+summary(anova_result)
+
+#program 2
+#create dataframe with the data
+data_1<-data.frame(group=c(rep("A",5),rep("B",5),rep("C",5)),value=c(10,12,15,18,20,8,10,12,14,16,5,8,10,12,14))
+#perform ANOVA
+model<-aov(value~group,data=data_1)
+#view Anova table
+summary(model)
+
+#10-Decision tree
+#load rpart package
+library(rpart)
+#load the iris dataset
+data(iris)
+#create a decision tree model
+model<-rpart(Species~ .,data=iris)
+#plot the decision tree
+plot(model)
+text(model,use.n=TRUE,all=TRUE,cex=0.8)
+
+#P3-PCA
+#Install packages
+install.packages("stats")
+install.packages("dplyr")
+#load required libraries
+library("stats")
+library("dplyr")
+#Iris dataset
+View(iris)
+#Unsupervised learning
+mydata<-select(iris,c(1,2,3,4))
+#check PCA eligibility
+cor(mydata)
+mean(cor(mydata))
+#Principal component analysis
+PCA = princomp(mydata)
+#PC loadings
+PCA$loadings
+#Principal components
+PC=PCA$scores
+View(PC)
+cor(PC)
