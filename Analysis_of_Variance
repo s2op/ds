@@ -1,0 +1,14 @@
+#load mtcars dataset
+data(mtcars)
+#perform anova on mpg by grouping the data by the number of cylinders
+anova_result<-aov(mpg~cyl,data=mtcars)
+#print anova summary
+summary(anova_result)
+
+#program 2
+#create dataframe with the data
+data_1<-data.frame(group=c(rep("A",5),rep("B",5),rep("C",5)),value=c(10,12,15,18,20,8,10,12,14,16,5,8,10,12,14))
+#perform ANOVA
+model<-aov(value~group,data=data_1)
+#view Anova table
+summary(model)
